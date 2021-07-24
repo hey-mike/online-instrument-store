@@ -44,15 +44,6 @@ var doc = `{
                 ],
                 "summary": "Returns list of recipes",
                 "operationId": "get-recipes",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Account ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -150,11 +141,13 @@ var doc = `{
                 "operationId": "create-recipe",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Recipe ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "Recipe Info",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Recipe"
+                        }
                     }
                 ],
                 "responses": {
@@ -359,8 +352,8 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
-	Host:        "petstore.swagger.io",
-	BasePath:    "/v2",
+	Host:        "localhost:8080",
+	BasePath:    "/",
 	Schemes:     []string{},
 	Title:       "Recipe API",
 	Description: "This is a sample server Petstore server.",

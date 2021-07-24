@@ -31,7 +31,6 @@ func NewRecipesController(ctx context.Context, collection *mongo.Collection) *Re
 // @ID get-recipes
 // @Accept  json
 // @Produce  json
-// @Param id path int true "Account ID"
 // @Success 200 {object} models.Recipe
 // @Header 200 {string} Token "qwerty"
 // @Failure 400,404 {object} httputil.HTTPError
@@ -63,7 +62,7 @@ func (controller *RecipesController) ListRecipesController(c *gin.Context) {
 // @ID create-recipe
 // @Accept  json
 // @Produce  json
-// @Param id path int true "Recipe ID"
+// @Param message body models.Recipe true "Recipe Info"
 // @Success 200 {object} models.Recipe
 // @Header 200 {string} Token "qwerty"
 // @Failure 400,404 {object} httputil.HTTPError

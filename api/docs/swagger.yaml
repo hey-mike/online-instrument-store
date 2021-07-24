@@ -1,4 +1,4 @@
-basePath: /v2
+basePath: /
 definitions:
   httputil.HTTPError:
     properties:
@@ -30,7 +30,7 @@ definitions:
           type: string
         type: array
     type: object
-host: petstore.swagger.io
+host: localhost:8080
 info:
   contact:
     email: support@swagger.io
@@ -50,12 +50,6 @@ paths:
       - application/json
       description: get recipes
       operationId: get-recipes
-      parameters:
-      - description: Account ID
-        in: path
-        name: id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -86,11 +80,12 @@ paths:
       description: create a new recipe
       operationId: create-recipe
       parameters:
-      - description: Recipe ID
-        in: path
-        name: id
+      - description: Recipe Info
+        in: body
+        name: message
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/models.Recipe'
       produces:
       - application/json
       responses:

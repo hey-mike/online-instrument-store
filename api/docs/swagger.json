@@ -15,8 +15,8 @@
         },
         "version": "1.0"
     },
-    "host": "petstore.swagger.io",
-    "basePath": "/v2",
+    "host": "localhost:8080",
+    "basePath": "/",
     "paths": {
         "/recipes": {
             "get": {
@@ -29,15 +29,6 @@
                 ],
                 "summary": "Returns list of recipes",
                 "operationId": "get-recipes",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Account ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -135,11 +126,13 @@
                 "operationId": "create-recipe",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Recipe ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "Recipe Info",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Recipe"
+                        }
                     }
                 ],
                 "responses": {

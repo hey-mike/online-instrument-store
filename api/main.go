@@ -43,8 +43,8 @@ func init() {
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host petstore.swagger.io
-// @BasePath /v2
+// @host localhost:8080
+// @BasePath /
 func main() {
 	router := gin.Default()
 
@@ -53,9 +53,6 @@ func main() {
 	router.PUT("/recipes/:id", recipesController.UpdateRecipeController)
 	router.DELETE("/recipes/:id", recipesController.DeleteRecipeController)
 	router.GET("/recipes/:id", recipesController.GetRecipeController)
-
-	// url := ginSwagger.URL("http://petstore.swagger.io:8080/swagger/doc.json") // The url pointing to API definition
-	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Run()
