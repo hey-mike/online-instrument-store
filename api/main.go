@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
+	"log"
 	"net/http"
+	"os"
 
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -10,6 +13,9 @@ import (
 	"microservice/src/controllers"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 // HealthCheck godoc
@@ -28,6 +34,17 @@ func HealthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+func init() {
+	ctx := context.Background()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGO_URI")))
+	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Connected to MongoDB")
+
+	// collection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("recipes")
+}
+
 // @title Swagger Example API
 // @version 1.0
 // @description This is a sample server Petstore server.
@@ -44,21 +61,6 @@ func HealthCheck(c *gin.Context) {
 // @BasePath /v2
 func main() {
 	router := gin.Default()
-	// c := controllers.NewRecipeController()
-
-	// v1 := router.Group("/api/v1")
-	// {
-	// 	recipes := v1.Group("/recipes")
-	// 	{
-	// 		router.POST("/recipes", c.NewRecipeController)
-	// 		router.GET("/recipes", c.ListRecipesController)
-	// 		router.PUT("/recipes/:id", c.UpdateRecipeController)
-	// 		router.DELETE("/recipes/:id", c.DeleteRecipeController)
-	// 		router.GET("/recipes/:id", c.GetRecipeController)
-	// 	}
-	// 	//...
-	// }
-	// router.GET("/swagger/*any", ginSwagger.WrapController(swaggerFiles.Controller))
 
 	router.POST("/recipes", controllers.NewRecipeController)
 	router.GET("/recipes", controllers.ListRecipesController)
