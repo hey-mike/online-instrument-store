@@ -69,7 +69,6 @@ func main() {
 	// url := ginSwagger.URL("http://petstore.swagger.io:8080/swagger/doc.json") // The url pointing to API definition
 	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
-	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Run()
 }

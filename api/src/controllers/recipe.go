@@ -13,10 +13,9 @@ import (
 
 var recipes []models.Recipe
 
-// ShowAccount godoc
-// @Summary Show a account
-// @Description get string by ID
-// @ID get-string-by-int
+// @Summary Returns list of recipes
+// @Description get recipes
+// @ID get-recipes
 // @Accept  json
 // @Produce  json
 // @Param id path int true "Account ID"
@@ -24,14 +23,9 @@ var recipes []models.Recipe
 // @Header 200 {string} Token "qwerty"
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
-// @Router /accounts/{id} [get]
+// @Router /recipes [get]
 func ListRecipesController(c *gin.Context) {
-	id := c.Param("id")
-	_, err := strconv.Atoi(id)
-	if err != nil {
-		httputil.NewError(c, http.StatusBadRequest, err)
-		return
-	}
+
 	c.JSON(http.StatusOK, recipes)
 }
 
@@ -141,24 +135,25 @@ func DeleteRecipeController(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Recipe has been deleted"})
 }
 
-// swagger:operation GET /recipes/{id} recipes oneRecipe
-// Get one recipe
-// ---
-// produces:
-// - application/json
-// parameters:
-//   - name: id
-//     in: path
-//     description: ID of the recipe
-//     required: true
-//     type: string
-// responses:
-//     '200':
-//         description: Successful operation
-//     '404':
-//         description: Invalid recipe ID
+// @Summary Show a account
+// @Description get string by ID
+// @ID get-recipe
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Recipe ID"
+// @Success 200 {object} models.Recipe
+// @Header 200 {string} Token "qwerty"
+// @Failure 400,404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /recipes/{id} [get]
 func GetRecipeController(c *gin.Context) {
-	id := c.Query("id")
+	id := c.Param("id")
+	_, err := strconv.Atoi(id)
+	if err != nil {
+		httputil.NewError(c, http.StatusBadRequest, err)
+		return
+	}
+
 	for i := 0; i < len(recipes); i++ {
 		if recipes[i].ID == id {
 			c.JSON(http.StatusOK, recipes[i])

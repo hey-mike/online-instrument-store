@@ -60,14 +60,50 @@ paths:
       summary: Show the status of server.
       tags:
       - root
-  /accounts/{id}:
+  /recipes:
+    get:
+      consumes:
+      - application/json
+      description: get list of recipes
+      operationId: get-recipes
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Token:
+              description: qwerty
+              type: string
+          schema:
+            $ref: '#/definitions/models.Recipe'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Returns list of recipes
+  /recipes/{id}:
     get:
       consumes:
       - application/json
       description: get string by ID
-      operationId: get-string-by-int
+      operationId: get-recipe
       parameters:
-      - description: Account ID
+      - description: Recipe ID
         in: path
         name: id
         required: true

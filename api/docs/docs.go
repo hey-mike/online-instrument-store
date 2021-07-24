@@ -57,7 +57,61 @@ var doc = `{
                 }
             }
         },
-        "/accounts/{id}": {
+        "/recipes": {
+            "get": {
+                "description": "get list of recipes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Returns list of recipes",
+                "operationId": "get-recipes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Recipe"
+                        },
+                        "headers": {
+                            "Token": {
+                                "type": "string",
+                                "description": "qwerty"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/recipes/{id}": {
             "get": {
                 "description": "get string by ID",
                 "consumes": [
@@ -67,11 +121,11 @@ var doc = `{
                     "application/json"
                 ],
                 "summary": "Show a account",
-                "operationId": "get-string-by-int",
+                "operationId": "get-recipe",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Account ID",
+                        "description": "Recipe ID",
                         "name": "id",
                         "in": "path",
                         "required": true
