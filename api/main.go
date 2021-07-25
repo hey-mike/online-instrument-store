@@ -54,6 +54,9 @@ func init() {
 	log.Info("Connected to Redis", status)
 
 	recipesController = controllers.NewRecipesController(ctx, collection, redisClient)
+
+	collectionUsers := client.Database(mongo_db).Collection("users")
+	authController = controllers.NewAuthController(ctx, collectionUsers)
 }
 
 // @title Recipe API
@@ -70,6 +73,12 @@ func init() {
 
 // @host localhost:8080
 // @BasePath /
+
+// @securityDefinitions.basic BasicAuth
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	router := gin.Default()
 	router.Use(middlewares.RequestIdMiddleware())
@@ -86,7 +95,7 @@ func main() {
 		authorized.POST("/recipes", recipesController.NewRecipe)
 		authorized.PUT("/recipes/:id", recipesController.UpdateRecipe)
 		authorized.DELETE("/recipes/:id", recipesController.DeleteRecipe)
-		authorized.GET("/recipes/:id", recipesController.GetRecipe)
+		router.GET("/recipes/:id", recipesController.GetRecipe)
 	}
 
 	// enable swagger doc

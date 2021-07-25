@@ -30,6 +30,7 @@ func NewRecipesController(ctx context.Context, collection *mongo.Collection, red
 	}
 }
 
+// ListRecipes godoc
 // @Summary Returns list of recipes
 // @Tags recipe
 // @Description get recipes
@@ -44,7 +45,7 @@ func NewRecipesController(ctx context.Context, collection *mongo.Collection, red
 func (controller *RecipesController) ListRecipes(c *gin.Context) {
 	val, err := controller.redisClient.Get("recipes").Result()
 	if err == redis.Nil {
-		log.Printf("Load data from MongoDB")
+		log.Info("Load data from MongoDB")
 		cur, err := controller.collection.Find(c, bson.M{})
 
 		if err != nil {
@@ -74,7 +75,9 @@ func (controller *RecipesController) ListRecipes(c *gin.Context) {
 
 }
 
+// GetRecipe godoc
 // @Summary Get a recipe
+// @Tags recipe
 // @Description get string by ID
 // @ID get-recipe
 // @Accept  json
@@ -88,8 +91,6 @@ func (controller *RecipesController) ListRecipes(c *gin.Context) {
 func (controller *RecipesController) GetRecipe(c *gin.Context) {
 	id := c.Param("id")
 	log.Info("Get recipe: ", id)
-	request_id := c.GetHeader("X-Request-Id")
-	log.Debug("X-Request-Id", request_id)
 
 	objectId, _ := primitive.ObjectIDFromHex(id)
 	cur := controller.collection.FindOne(controller.ctx, bson.M{
@@ -106,7 +107,9 @@ func (controller *RecipesController) GetRecipe(c *gin.Context) {
 	c.JSON(http.StatusOK, recipe)
 }
 
+// NewRecipe godoc
 // @Summary Create a new recipe
+// @Tags recipe
 // @Description create a new recipe
 // @ID create-recipe
 // @Accept  json
@@ -138,12 +141,15 @@ func (controller *RecipesController) NewRecipe(c *gin.Context) {
 	c.JSON(http.StatusOK, recipe)
 }
 
+// UpdateRecipe godoc
+// @Tags recipe
 // @Summary Update a recipe
 // @Description update recipe
 // @ID update-recipe
 // @Accept  json
 // @Produce  json
 // @Param id path int true "Recipe ID"
+// @Param message body models.Recipe true "Recipe Info"
 // @Success 200 {object} models.Recipe
 // @Header 200 {string} Token "qwerty"
 // @Failure 400,404 {object} httputil.HTTPError
@@ -174,7 +180,9 @@ func (controller *RecipesController) UpdateRecipe(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Recipe has been updated"})
 }
 
+// DeleteRecipe godoc
 // @Summary Delete a recipe
+// @Tags recipe
 // @Description delete recipe by ID
 // @ID get-recipe
 // @Accept  json

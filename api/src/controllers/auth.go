@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -26,12 +27,26 @@ func NewAuthController(ctx context.Context, collection *mongo.Collection) *AuthC
 	}
 }
 
+// SignIn godoc
+// @Tags auth
+// @Summary User sign in
+// @Description User sign in
+// @Accept  json
+// @Produce  json
+// @Param message body models.User true "User Info"
+// @Success 200 {object} models.Recipe
+// @Header 200 {string} Token "qwerty"
+// @Failure 400,404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /signin [post]
 func (controller *AuthController) SignIn(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	log.Info("SignIn", user.Username)
 
 	h := sha256.New()
 
