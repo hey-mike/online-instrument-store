@@ -42,6 +42,9 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "recipe"
+                ],
                 "summary": "Returns list of recipes",
                 "operationId": "get-recipes",
                 "responses": {

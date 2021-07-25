@@ -74,6 +74,8 @@ paths:
           schema:
             $ref: '#/definitions/httputil.HTTPError'
       summary: Returns list of recipes
+      tags:
+      - recipe
     post:
       consumes:
       - application/json

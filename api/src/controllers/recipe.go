@@ -31,6 +31,7 @@ func NewRecipesController(ctx context.Context, collection *mongo.Collection, red
 }
 
 // @Summary Returns list of recipes
+// @Tags recipe
 // @Description get recipes
 // @ID get-recipes
 // @Accept  json
