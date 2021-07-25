@@ -197,7 +197,7 @@ var doc = `{
                 "operationId": "get-recipe",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Recipe ID",
                         "name": "id",
                         "in": "path",

@@ -3,10 +3,11 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"microservice/src/models"
 	"net/http"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
@@ -39,7 +40,7 @@ func NewRecipesController(ctx context.Context, collection *mongo.Collection, red
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
 // @Router /recipes [get]
-func (controller *RecipesController) ListRecipesController(c *gin.Context) {
+func (controller *RecipesController) ListRecipes(c *gin.Context) {
 	val, err := controller.redisClient.Get("recipes").Result()
 	if err == redis.Nil {
 		log.Printf("Load data from MongoDB")
@@ -64,12 +65,44 @@ func (controller *RecipesController) ListRecipesController(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	} else {
-		log.Printf("Load data from Redis - cache")
+		log.Info("Load data from Redis - cache")
 		recipes := make([]models.Recipe, 0)
 		json.Unmarshal([]byte(val), &recipes)
 		c.JSON(http.StatusOK, recipes)
 	}
 
+}
+
+// @Summary Get a recipe
+// @Description get string by ID
+// @ID get-recipe
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Recipe ID"
+// @Success 200 {object} models.Recipe
+// @Header 200 {string} Token "qwerty"
+// @Failure 400,404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /recipes/{id} [get]
+func (controller *RecipesController) GetRecipe(c *gin.Context) {
+	id := c.Param("id")
+	log.Info("Get recipe: ", id)
+	request_id := c.GetHeader("X-Request-Id")
+	log.Debug("X-Request-Id", request_id)
+
+	objectId, _ := primitive.ObjectIDFromHex(id)
+	cur := controller.collection.FindOne(controller.ctx, bson.M{
+		"_id": objectId,
+	})
+	var recipe models.Recipe
+	err := cur.Decode(&recipe)
+	if err != nil {
+		log.Error("GetRecipe Error: ", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, recipe)
 }
 
 // @Summary Create a new recipe
@@ -83,7 +116,7 @@ func (controller *RecipesController) ListRecipesController(c *gin.Context) {
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
 // @Router /recipes [post]
-func (controller *RecipesController) NewRecipeController(c *gin.Context) {
+func (controller *RecipesController) NewRecipe(c *gin.Context) {
 	var recipe models.Recipe
 	if err := c.ShouldBindJSON(&recipe); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -115,7 +148,7 @@ func (controller *RecipesController) NewRecipeController(c *gin.Context) {
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
 // @Router /recipes [put]
-func (controller *RecipesController) UpdateRecipeController(c *gin.Context) {
+func (controller *RecipesController) UpdateRecipe(c *gin.Context) {
 	id := c.Param("id")
 	var recipe models.Recipe
 	if err := c.ShouldBindJSON(&recipe); err != nil {
@@ -151,7 +184,7 @@ func (controller *RecipesController) UpdateRecipeController(c *gin.Context) {
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
 // @Router /recipes/{id} [delete]
-func (controller *RecipesController) DeleteRecipeController(c *gin.Context) {
+func (controller *RecipesController) DeleteRecipe(c *gin.Context) {
 	id := c.Param("id")
 	objectId, _ := primitive.ObjectIDFromHex(id)
 	_, err := controller.collection.DeleteOne(controller.ctx, bson.M{
@@ -162,31 +195,4 @@ func (controller *RecipesController) DeleteRecipeController(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Recipe has been deleted"})
-}
-
-// @Summary Get a recipe
-// @Description get string by ID
-// @ID get-recipe
-// @Accept  json
-// @Produce  json
-// @Param id path int true "Recipe ID"
-// @Success 200 {object} models.Recipe
-// @Header 200 {string} Token "qwerty"
-// @Failure 400,404 {object} httputil.HTTPError
-// @Failure 500 {object} httputil.HTTPError
-// @Router /recipes/{id} [get]
-func (controller *RecipesController) GetRecipeController(c *gin.Context) {
-	id := c.Param("id")
-	objectId, _ := primitive.ObjectIDFromHex(id)
-	cur := controller.collection.FindOne(controller.ctx, bson.M{
-		"_id": objectId,
-	})
-	var recipe models.Recipe
-	err := cur.Decode(&recipe)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, recipe)
 }

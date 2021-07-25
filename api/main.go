@@ -2,9 +2,6 @@ package main
 
 import (
 	"context"
-	"time"
-
-	"os"
 
 	log "github.com/sirupsen/logrus"
 
@@ -14,6 +11,7 @@ import (
 	_ "microservice/docs"
 	"microservice/src/config"
 	"microservice/src/controllers"
+	"microservice/src/middlewares"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
@@ -23,33 +21,28 @@ import (
 )
 
 var recipesController *controllers.RecipesController
+var authController *controllers.AuthController
 
 func init() {
 	ctx := context.Background()
 	mongo_uri := config.GetEnv("MONGO_URI")
+	mongo_db := config.GetEnv("MONGO_DATABASE")
 
 	log.SetLevel(log.DebugLevel)
-	log.Debug("MONGO_URI", mongo_uri)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	log.Debug("MONGO_URI: ", mongo_uri)
+	log.Debug("MONGO_DATABASE: ", mongo_db)
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongo_uri))
 	if err != nil {
 		panic(err)
 	}
-	defer func() {
-		if err = client.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
 
 	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
 	log.Info("Connected to MongoDB")
 
-	collection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("recipes")
+	collection := client.Database(mongo_db).Collection("recipes")
 
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -58,7 +51,7 @@ func init() {
 	})
 
 	status := redisClient.Ping()
-	log.Info(status)
+	log.Info("Connected to Redis", status)
 
 	recipesController = controllers.NewRecipesController(ctx, collection, redisClient)
 }
@@ -79,13 +72,24 @@ func init() {
 // @BasePath /
 func main() {
 	router := gin.Default()
+	router.Use(middlewares.RequestIdMiddleware())
 
-	router.POST("/recipes", recipesController.NewRecipeController)
-	router.GET("/recipes", recipesController.ListRecipesController)
-	router.PUT("/recipes/:id", recipesController.UpdateRecipeController)
-	router.DELETE("/recipes/:id", recipesController.DeleteRecipeController)
-	router.GET("/recipes/:id", recipesController.GetRecipeController)
+	router.POST("/signin", authController.SignIn)
 
+	router.GET("/recipes", recipesController.ListRecipes)
+
+	authorized := router.Group("/")
+	authorized.Use(gin.Logger())
+	authorized.Use(gin.Recovery())
+	authorized.Use(middlewares.AuthMiddleware())
+	{
+		authorized.POST("/recipes", recipesController.NewRecipe)
+		authorized.PUT("/recipes/:id", recipesController.UpdateRecipe)
+		authorized.DELETE("/recipes/:id", recipesController.DeleteRecipe)
+		authorized.GET("/recipes/:id", recipesController.GetRecipe)
+	}
+
+	// enable swagger doc
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Run()
 }
