@@ -2,13 +2,17 @@ package main
 
 import (
 	"context"
-	"log"
+	"time"
+
 	"os"
+
+	log "github.com/sirupsen/logrus"
 
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
 	_ "microservice/docs"
+	"microservice/src/config"
 	"microservice/src/controllers"
 
 	"github.com/gin-gonic/gin"
@@ -22,11 +26,28 @@ var recipesController *controllers.RecipesController
 
 func init() {
 	ctx := context.Background()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGO_URI")))
+	mongo_uri := config.GetEnv("MONGO_URI")
+
+	log.SetLevel(log.DebugLevel)
+	log.Debug("MONGO_URI", mongo_uri)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongo_uri))
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		if err = client.Disconnect(ctx); err != nil {
+			panic(err)
+		}
+	}()
+
 	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Connected to MongoDB")
+	log.Info("Connected to MongoDB")
 
 	collection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("recipes")
 
@@ -37,7 +58,7 @@ func init() {
 	})
 
 	status := redisClient.Ping()
-	log.Println(status)
+	log.Info(status)
 
 	recipesController = controllers.NewRecipesController(ctx, collection, redisClient)
 }
