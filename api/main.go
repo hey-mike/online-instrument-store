@@ -75,8 +75,6 @@ func init() {
 // @host localhost:8080
 // @BasePath /
 
-// @securityDefinitions.basic BasicAuth
-
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization

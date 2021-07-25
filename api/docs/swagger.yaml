@@ -80,6 +80,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: Returns list of recipes
       tags:
       - recipe
@@ -118,6 +120,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: Create a new recipe
       tags:
       - recipe
@@ -161,6 +165,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: Update a recipe
       tags:
       - recipe
@@ -199,6 +205,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: Delete a recipe
       tags:
       - recipe
@@ -236,9 +244,49 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: Get a recipe
       tags:
       - recipe
+  /refresh-token:
+    get:
+      consumes:
+      - application/json
+      description: Refresh auth token
+      parameters:
+      - description: User Info
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Token:
+              description: qwerty
+              type: string
+          schema:
+            $ref: '#/definitions/models.Recipe'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Refresh auth token
+      tags:
+      - auth
   /signin:
     post:
       consumes:
@@ -282,6 +330,4 @@ securityDefinitions:
     in: header
     name: Authorization
     type: apiKey
-  BasicAuth:
-    type: basic
 swagger: "2.0"

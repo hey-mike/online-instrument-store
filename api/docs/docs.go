@@ -35,6 +35,11 @@ var doc = `{
     "paths": {
         "/recipes": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get recipes",
                 "consumes": [
                     "application/json"
@@ -81,6 +86,11 @@ var doc = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "update recipe",
                 "consumes": [
                     "application/json"
@@ -145,6 +155,11 @@ var doc = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "create a new recipe",
                 "consumes": [
                     "application/json"
@@ -204,6 +219,11 @@ var doc = `{
         },
         "/recipes/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get string by ID",
                 "consumes": [
                     "application/json"
@@ -259,6 +279,11 @@ var doc = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "delete recipe by ID",
                 "consumes": [
                     "application/json"
@@ -278,6 +303,64 @@ var doc = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Recipe"
+                        },
+                        "headers": {
+                            "Token": {
+                                "type": "string",
+                                "description": "qwerty"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/refresh-token": {
+            "get": {
+                "description": "Refresh auth token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh auth token",
+                "parameters": [
+                    {
+                        "description": "User Info",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
                     }
                 ],
                 "responses": {
@@ -436,9 +519,6 @@ var doc = `{
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
-        },
-        "BasicAuth": {
-            "type": "basic"
         }
     }
 }`

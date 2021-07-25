@@ -33,6 +33,7 @@ func NewRecipesController(ctx context.Context, collection *mongo.Collection, red
 // ListRecipes godoc
 // @Summary Returns list of recipes
 // @Tags recipe
+// @Security ApiKeyAuth
 // @Description get recipes
 // @ID get-recipes
 // @Accept  json
@@ -88,6 +89,7 @@ func (controller *RecipesController) ListRecipes(c *gin.Context) {
 // @Header 200 {string} Token "qwerty"
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
+// @Security ApiKeyAuth
 // @Router /recipes/{id} [get]
 func (controller *RecipesController) GetRecipe(c *gin.Context) {
 	id := c.Param("id")
@@ -120,6 +122,7 @@ func (controller *RecipesController) GetRecipe(c *gin.Context) {
 // @Header 200 {string} Token "qwerty"
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
+// @Security ApiKeyAuth
 // @Router /recipes [post]
 func (controller *RecipesController) NewRecipe(c *gin.Context) {
 	var recipe models.Recipe
@@ -155,6 +158,7 @@ func (controller *RecipesController) NewRecipe(c *gin.Context) {
 // @Header 200 {string} Token "qwerty"
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
+// @Security ApiKeyAuth
 // @Router /recipes [put]
 func (controller *RecipesController) UpdateRecipe(c *gin.Context) {
 	id := c.Param("id")
@@ -193,6 +197,7 @@ func (controller *RecipesController) UpdateRecipe(c *gin.Context) {
 // @Header 200 {string} Token "qwerty"
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
+// @Security ApiKeyAuth
 // @Router /recipes/{id} [delete]
 func (controller *RecipesController) DeleteRecipe(c *gin.Context) {
 	id := c.Param("id")
