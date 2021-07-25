@@ -46,7 +46,8 @@ func (controller *AuthController) SignIn(c *gin.Context) {
 		return
 	}
 
-	log.Info("SignIn", user.Username)
+	log.Debug("Username: ", user.Username)
+	log.Debug("Password: ", user.Password)
 
 	h := sha256.New()
 

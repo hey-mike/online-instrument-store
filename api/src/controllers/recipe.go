@@ -63,6 +63,7 @@ func (controller *RecipesController) ListRecipes(c *gin.Context) {
 
 		data, _ := json.Marshal(recipes)
 		controller.redisClient.Set("recipes", string(data), 0)
+		c.JSON(http.StatusOK, recipes)
 	} else if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

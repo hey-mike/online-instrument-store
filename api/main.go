@@ -57,6 +57,7 @@ func init() {
 
 	collectionUsers := client.Database(mongo_db).Collection("users")
 	authController = controllers.NewAuthController(ctx, collectionUsers)
+
 }
 
 // @title Recipe API
