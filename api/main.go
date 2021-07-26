@@ -102,5 +102,5 @@ func main() {
 
 	// enable swagger doc
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.Run()
+	router.Run(":8000")
 }
