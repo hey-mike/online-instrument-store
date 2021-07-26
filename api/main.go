@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
+	"os"
 
 	"github.com/gin-contrib/cors"
+	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
 	_ "microservice/docs"
-	"microservice/src/config"
 	"microservice/src/controllers"
 	"microservice/src/middlewares"
 
@@ -25,9 +26,11 @@ var recipesController *controllers.RecipesController
 var authController *controllers.AuthController
 
 func init() {
+	godotenv.Load()
 	ctx := context.Background()
-	mongo_uri := config.GetEnv("MONGO_URI")
-	mongo_db := config.GetEnv("MONGO_DATABASE")
+
+	mongo_uri := os.Getenv("MONGO_URI")
+	mongo_db := os.Getenv("MONGO_DATABASE")
 
 	log.SetLevel(log.DebugLevel)
 	log.Debug("MONGO_URI: ", mongo_uri)

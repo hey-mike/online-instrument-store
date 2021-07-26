@@ -10,6 +10,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.1+incompatible
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect

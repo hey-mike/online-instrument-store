@@ -1,9 +1,9 @@
 package middlewares
 
 import (
-	"microservice/src/config"
 	"microservice/src/models"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -19,7 +19,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		claims := &models.Claims{}
 
 		tkn, err := jwt.ParseWithClaims(tokenValue, claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte(config.GetEnv("JWT_SECRET")), nil
+			return []byte(os.Getenv("JWT_SECRET")), nil
 		})
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
