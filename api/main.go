@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/gin-contrib/cors"
 	log "github.com/sirupsen/logrus"
 
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -80,6 +81,8 @@ func init() {
 // @name Authorization
 func main() {
 	router := gin.Default()
+	router.Use(cors.Default())
+
 	router.Use(middlewares.RequestIdMiddleware())
 
 	router.POST("/signin", authController.SignIn)
