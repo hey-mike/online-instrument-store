@@ -49,13 +49,13 @@ func init() {
 	collection := client.Database(mongo_db).Collection("recipes")
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     os.Getenv("REDIS_URI"),
 		Password: "",
 		DB:       0,
 	})
 
 	status := redisClient.Ping()
-	log.Info("Connected to Redis", status)
+	log.Info("Connected to Redis: ", status)
 
 	recipesController = controllers.NewRecipesController(ctx, collection, redisClient)
 
