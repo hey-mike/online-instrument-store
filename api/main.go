@@ -107,7 +107,7 @@ func SetupServer() *gin.Engine {
 }
 
 func main() {
-	if err := SetupServer().Run(); err != nil {
+	if err := SetupServer().Run(":8000"); err != nil {
         log.Fatal("Failed to Run Server")
     }
 }
