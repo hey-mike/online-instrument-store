@@ -82,19 +82,16 @@ func init() {
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func main() {
+func SetupServer() *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.Default())
-
 	router.Use(middlewares.RequestIdMiddleware())
 
 	router.POST("/signin", authController.SignIn)
-
 	router.GET("/recipes", recipesController.ListRecipes)
+	router.POST("/refresh", authController.RefreshToken)
 
 	authorized := router.Group("/")
-	authorized.Use(gin.Logger())
-	authorized.Use(gin.Recovery())
 	authorized.Use(middlewares.AuthMiddleware())
 	{
 		authorized.POST("/recipes", recipesController.NewRecipe)
@@ -105,5 +102,12 @@ func main() {
 
 	// enable swagger doc
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.Run(":8000")
+
+	return router;
+}
+
+func main() {
+	if err := SetupServer().Run(); err != nil {
+        log.Fatal("Failed to Run Server")
+    }
 }
