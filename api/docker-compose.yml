@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3"
 
 services:
     api:
@@ -12,7 +12,6 @@ services:
         external_links:
             - mongodb
             - redis
-        scale: 5
 
     redis:
         image: redis

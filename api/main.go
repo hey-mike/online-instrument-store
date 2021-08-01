@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -63,6 +65,9 @@ func init() {
 	authController = controllers.NewAuthController(ctx, collectionUsers)
 
 }
+func VersionHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"version": os.Getenv("API_VERSION")})
+}
 
 // @title Recipe API
 // @version 1.0
@@ -86,6 +91,7 @@ func SetupServer() *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.Default())
 	router.Use(middlewares.RequestIdMiddleware())
+	router.Use(middlewares.PrometheusMiddleware())
 
 	router.POST("/signin", authController.SignIn)
 	router.GET("/recipes", recipesController.ListRecipes)
@@ -99,6 +105,8 @@ func SetupServer() *gin.Engine {
 		authorized.DELETE("/recipes/:id", recipesController.DeleteRecipe)
 		router.GET("/recipes/:id", recipesController.GetRecipe)
 	}
+	router.GET("/version", VersionHandler)
+	router.GET("/prometheus", gin.WrapH(promhttp.Handler()))
 
 	// enable swagger doc
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
